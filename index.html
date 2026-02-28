@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abifral — Conforto e Dignidade em Cada Detalhe</title>
+    <meta name="description"
+        content="Fraldas geriátricas de alta qualidade para incontinência. Abifral oferece conforto, segurança e dignidade com tecnologia avançada e Aloe Vera." />
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { DEFAULT: '#1A1F8F', dark: '#0F1360', light: '#2D34B8' },
+                        teal: { DEFAULT: '#00C4B4', dark: '#009E91', light: '#33D0C3' },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <style>
+        :root {
+            --navy: #1A1F8F;
+            --navy-dark: #0F1360;
+            --navy-light: #2D34B8;
+            --teal: #00C4B4;
+            --teal-dark: #009E91;
+            --teal-light: #33D0C3;
+            --teal-muted: rgba(0, 196, 180, 0.15);
+            --off-white: #F8F8F6;
+            --ink: #1C1C1C;
+            --mid: #9A9A96;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #FFFFFF;
+            color: var(--ink);
+            overflow-x: hidden
+        }
+
+        /* ── Noise overlay ── */
+        .noise {
+            position: fixed;
+            inset: 0;
+            opacity: .025;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+        }
+
+        /* ── Animated grid ── */
+        .animated-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(26, 31, 143, .04) 1px, transparent 1px), linear-gradient(to bottom, rgba(26, 31, 143, .04) 1px, transparent 1px)
+        }
+
+        /* ── Grid lines ── */
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            z-index: 0
+        }
+
+        .grid-lines span {
+            border-right: 1px solid rgba(26, 31, 143, .05)
+        }
+
+        /* ── Section label ── */
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--teal);
+            display: block;
+            margin-bottom: .5rem
+        }
+
+        /* ── Badge ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .375rem;
+            padding: .25rem .75rem;
+            border-radius: 9999px;
+            font-size: .7rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            border: 1px solid
+        }
+
+        /* ── Button beam ── */
+        .btn-beam {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 9999px;
+            padding: 1px;
+            cursor: pointer;
+            text-decoration: none
+        }
+
+        .btn-beam::before {
+            content: "";
+            position: absolute;
+            inset: -1000%;
+            animation: beam-spin 3s linear infinite;
+            background: conic-gradient(from 0deg, transparent 0 340deg, var(--teal) 360deg)
+        }
+
+        .btn-beam-inner {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: .625rem;
+            padding: .875rem 2rem;
+            border-radius: 9999px;
+            background: var(--navy);
+            color: #fff;
+            font-weight: 600;
+            font-size: .875rem;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            transition: background .3s
+        }
+
+        .btn-beam-inner:hover {
+            background: var(--navy-dark)
+        }
+
+        @keyframes beam-spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* ── Marquee ── */
+        .marquee-container {
+            display: flex;
+            overflow: hidden;
+            user-select: none
+        }
+
+        .marquee-content {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-around;
+            min-width: 100%;
+            animation: marquee-scroll 45s linear infinite
+        }
+
+        @keyframes marquee-scroll {
+            from {
+                transform: translateX(0)
+            }
+
+            to {
+                transform: translateX(-100%)
+            }
+        }
+
+        /* ── Float ── */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-16px)
+            }
+        }
+
+        /* ── Glow pulse ── */
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(0, 196, 180, .25)
+            }
+
+            50% {
+                box-shadow: 0 0 60px rgba(0, 196, 180, .55), 0 0 90px rgba(26, 31, 143, .2)
+            }
+        }
+
+        /* ── AnimationIn ── */
+        @keyframes animationIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+                filter: blur(8px)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0)
+            }
+        }
+
+        /* ── Draw path ── */
+        .draw-path {
+            stroke-dasharray: 900;
+            stroke-dashoffset: 900;
+            animation: drawPath 2.5s var(--ease-spring) forwards
+        }
+
+        @keyframes drawPath {
+            to {
+                stroke-dashoffset: 0
+            }
+        }
+
+        /* ── Spin slow ── */
+        @keyframes spinSlow {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* ── Text outline ── */
+        .text-outline-teal {
+            -webkit-text-stroke: 2px var(--teal);
+            color: transparent
+        }
+
+        /* ── Flashlight ── */
+        .flashlight {
+            position: relative
+        }
+
+        .flashlight::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 196, 180, .1), transparent 40%);
+            opacity: 0;
+            transition: opacity .5s;
+            pointer-events: none;
+            z-index: 2
+        }
+
+        .flashlight:hover::before {
+            opacity: 1
+        }
+
+        /* ── Card hover ── */
+        .card-hover {
+            transition: transform .4s var(--ease-spring), box-shadow .4s
+        }
+
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 60px rgba(26, 31, 143, .1)
+        }
+
+        /* ── Nav ── */
+        #main-nav {
+            transition: background .4s ease, box-shadow .4s ease, border-color .4s ease
+        }
+
+        #main-nav.nav-solid {
+            background: rgba(255, 255, 255, .96) !important;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, .07)
+        }
+
+        /* ── Field ── */
+        .field {
+            width: 100%;
+            padding: .75rem 1rem;
+            border: 1px solid #D4D4CE;
+            background: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: .875rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color .2s, box-shadow .2s
+        }
+
+        .field::placeholder {
+            color: #9A9A96
+        }
+
+        .field:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 196, 180, .15)
+        }
+
+        /* ── Progress bar ── */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--navy), var(--teal));
+            z-index: 10000;
+            width: 0%;
+            transition: width .08s linear;
+            transform-origin: left
+        }
+
+        /* ── Size pill ── */
+        .size-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.75rem;
+            height: 2.75rem;
+            border: 1.5px solid;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            font-weight: 700;
+            letter-spacing: .05em;
+            cursor: pointer;
+            transition: all .25s var(--ease-spring)
+        }
+
+        .size-pill:hover {
+            transform: scale(1.08)
+        }
+
+        /* ── Timeline dot ── */
+        .timeline-dot {
+            width: .6rem;
+            height: .6rem;
+            border-radius: 50%;
+            background: var(--teal);
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(0, 196, 180, .2)
+        }
+
+        /* ── Feature icon ── */
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 196, 180, .3);
+            background: var(--teal-muted);
+            flex-shrink: 0
+        }
+
+        /* ── Stat number ── */
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -.04em
+        }
+
+        /* ── Scroll bounce ── */
+        @keyframes bounceDown {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(8px)
+            }
+        }
+
+        .scroll-indicator {
+            animation: bounceDown 2s ease-in-out infinite
+        }
+
+        /* ── Glow border ── */
+        .glow-border {
+            box-shadow: 0 0 0 1px rgba(0, 196, 180, .3), 0 0 20px rgba(0, 196, 180, .12)
+        }
+
+        /* ── Iconify fix ── */
+        iconify-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle
+        }
+
+        /* ── Input dark theme ── */
+        .field-dark {
+            background: rgba(255, 255, 255, .06) !important;
+            border-color: rgba(255, 255, 255, .15) !important;
+            color: #fff !important
+        }
+
+        .field-dark::placeholder {
+            color: rgba(255, 255, 255, .3) !important
+        }
+
+        .field-dark:focus {
+            border-color: var(--teal) !important;
+            box-shadow: 0 0 0 3px rgba(0, 196, 180, .2) !important
+        }
+
+        .field-dark option {
+            background: var(--navy-dark);
+            color: #fff
+        }
+
+        /* ── Product section bg ── */
+        .prod-bg-classic {
+            background: linear-gradient(135deg, rgba(26, 31, 143, .04) 0%, rgba(0, 196, 180, .07) 100%)
+        }
+
+        .prod-bg-ecofral {
+            background: linear-gradient(135deg, rgba(0, 196, 180, .06) 0%, rgba(26, 31, 143, .04) 100%)
+        }
+
+        /* ── Mobile menu ── */
+        #mobile-menu {
+            display: none
+        }
+
+        #mobile-menu.open {
+            display: block
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .btn-beam-inner {
+                padding: .75rem 1.5rem;
+                font-size: .8rem
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- Noise overlay -->
+    <div class="noise" aria-hidden="true"></div>
+
+    <!-- Progress bar -->
+    <div id="progress-bar" aria-hidden="true"></div>
+
+    <!-- ══════════════════════════════════════════ NAV ══ -->
+    <header id="main-nav"
+        class="fixed top-0 left-0 right-0 z-50 border-b border-transparent"
+        style="background: rgba(255,255,255,.85); backdrop-filter: blur(12px);">
+        <div class="max-w-[1400px] mx-auto flex justify-between items-center px-6 md:px-10 py-4">
+            <!-- Left links -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#diferenciais"
+                    class="text-[11px] font-medium tracking-widest uppercase text-stone-500 hover:text-[--navy] transition-colors">Diferenciais</a>
+                <a href="#produtos"
+                    class="text-[11px] font-medium tracking-widest uppercase text-stone-500 hover:text-[--navy] transition-colors">Produtos</a>
+                <a href="#sobre"
+                    class="text-[11px] font-medium tracking-widest uppercase text-stone-500 hover:text-[--navy] transition-colors">Sobre</a>
+            </nav>
+
+            <!-- Logo center -->
+            <a href="#" class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 group">
+                <img src="assets/raw_file/logo.png" alt="Abifral" class="h-9 w-auto"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                <span class="text-[22px] font-black tracking-tighter hidden"
+                    style="color:var(--navy)">abi<span style="color:var(--teal)">fral</span></span>
+            </a>
+
+            <!-- Right links -->
+            <div class="flex items-center gap-4 md:gap-8">
+                <a href="#contato"
+                    class="hidden md:block text-[11px] font-medium tracking-widest uppercase text-stone-500 hover:text-[--navy] transition-colors">Contato</a>
+                <a href="https://wa.me/553130253209?text=Ol%C3%A1,%20vim%20pelo%20site!" target="_blank" rel="noopener" class="btn-beam">
+                    <span class="btn-beam-inner text-xs">Comprar Agora</span>
+                </a>
+                <!-- Hamburger -->
+                <button id="menu-btn" class="md:hidden text-stone-600" aria-label="Menu">
+                    <iconify-icon icon="solar:hamburger-menu-linear" style="font-size:1.5rem"></iconify-icon>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden border-t border-stone-100 bg-white/98 px-6 py-4 space-y-3">
+            <a href="#diferenciais"
+                class="block text-sm font-medium text-stone-600 hover:text-[--navy] transition-colors py-1">Diferenciais</a>
+            <a href="#produtos"
+                class="block text-sm font-medium text-stone-600 hover:text-[--navy] transition-colors py-1">Produtos</a>
+            <a href="#sobre"
+                class="block text-sm font-medium text-stone-600 hover:text-[--navy] transition-colors py-1">Sobre</a>
+            <a href="#contato"
+                class="block text-sm font-medium text-stone-600 hover:text-[--navy] transition-colors py-1">Contato</a>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════ HERO ══ -->
+    <section id="hero"
+        class="relative min-h-screen flex items-center overflow-hidden animated-grid"
+        style="padding-top: 76px;">
+        <!-- Grid lines -->
+        <div class="grid-lines" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <!-- Floating orbs -->
+        <div class="absolute top-[12%] left-[3%] w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
+            id="orb-1"
+            style="background:radial-gradient(circle,rgba(0,196,180,.15) 0%,transparent 70%);animation:float 11s ease-in-out infinite;"
+            aria-hidden="true"></div>
+        <div class="absolute bottom-[8%] right-[4%] w-80 h-80 md:w-[480px] md:h-[480px] rounded-full pointer-events-none"
+            id="orb-2"
+            style="background:radial-gradient(circle,rgba(26,31,143,.1) 0%,transparent 70%);animation:float 14s ease-in-out infinite 2s;"
+            aria-hidden="true"></div>
+        <div class="absolute top-[50%] right-[22%] w-40 h-40 rounded-full pointer-events-none hidden md:block"
+            style="background:radial-gradient(circle,rgba(0,196,180,.07) 0%,transparent 70%);animation:float 8s ease-in-out infinite 1.2s;"
+            aria-hidden="true"></div>
+
+        <!-- SVG decoration -->
+        <svg class="absolute top-0 right-0 w-1/2 h-full opacity-[0.03] pointer-events-none" viewBox="0 0 300 300"
+            fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="220" cy="150" r="130" stroke="#00C4B4" stroke-width="1" class="draw-path" />
+            <circle cx="220" cy="150" r="90" stroke="#1A1F8F" stroke-width="1" class="draw-path"
+                style="animation-delay:.6s" />
+            <circle cx="220" cy="150" r="50" stroke="#00C4B4" stroke-width="1" class="draw-path"
+                style="animation-delay:1.2s" />
+        </svg>
+
+        <div
+            class="max-w-[1400px] mx-auto px-6 md:px-10 w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center py-16 md:py-20">
+
+            <!-- Left: Text -->
+            <div class="relative z-10" id="hero-text">
+                <div id="hero-label" style="opacity:0;transform:translateY(20px)">
+                    <span class="section-label">Cuidado Geriátrico · Tecnologia Premium</span>
+                </div>
+
+                <h1 id="hero-title" class="mt-4 leading-none font-black tracking-tighter"
+                    style="font-size:clamp(3rem,7vw,6rem);font-family:'Space Grotesk',sans-serif;opacity:0;transform:translateY(40px)">
+                    <span style="color:var(--navy)">Conforto</span>
+                    <span style="color:var(--navy)">que</span>
+                    <span class="text-outline-teal"> Transforma</span><br />
+                    <span style="color:var(--navy)">Vidas.</span>
+                </h1>
+
+                <p id="hero-desc" class="mt-6 text-stone-500 text-lg font-light max-w-md leading-relaxed"
+                    style="opacity:0;transform:translateY(30px)">
+                    Fraldas geriátricas desenvolvidas com tecnologia de ponta — máxima absorção,
+                    toque suave com <strong class="font-medium text-stone-700">Aloe Vera</strong>
+                    e modelagem anatômica para liberdade e dignidade no dia a dia.
+                </p>
+
+                <div id="hero-cta" class="mt-10 flex flex-wrap items-center gap-4"
+                    style="opacity:0;transform:translateY(20px)">
+                    <a href="https://wa.me/553130253209?text=Ol%C3%A1,%20vim%20pelo%20site!" target="_blank" rel="noopener" class="btn-beam">
+                        <span class="btn-beam-inner">
+                            Comprar Agora
+                            <iconify-icon icon="solar:arrow-right-linear"></iconify-icon>
+                        </span>
+                    </a>
+                    <a href="#diferenciais"
+                        class="inline-flex items-center gap-2 px-6 py-3.5 border border-stone-300 text-sm font-medium uppercase tracking-widest text-stone-600 hover:border-[--teal] hover:text-[--teal] transition-all">
+                        Explorar
+                        <iconify-icon icon="solar:arrow-down-linear"></iconify-icon>
+                    </a>
+                </div>
+
+                <!-- Badges -->
+                <div id="hero-badges" class="mt-8 flex flex-wrap items-center gap-3"
+                    style="opacity:0;transform:translateY(15px)">
+                    <span class="badge" style="border-color:rgba(0,196,180,.4);color:var(--teal)">
+                        <iconify-icon icon="solar:shield-check-linear"></iconify-icon>
+                        Derm. Testado
+                    </span>
+                    <span class="badge" style="border-color:rgba(26,31,143,.3);color:var(--navy)">
+                        <iconify-icon icon="solar:leaf-linear"></iconify-icon>
+                        Aloe Vera
+                    </span>
+                    <span class="badge border-stone-300 text-stone-500">ANVISA</span>
+                </div>
+            </div>
+
+            <!-- Right: Product image -->
+            <div class="flex items-center justify-center relative" id="hero-product-col">
+                <div id="hero-product-wrap" class="relative z-10"
+                    style="opacity:0;transform:translateX(60px);animation:float 9s ease-in-out infinite 1s">
+                    <!-- Glow bg -->
+                    <div class="absolute -inset-8 rounded-full pointer-events-none"
+                        style="background:radial-gradient(circle,rgba(0,196,180,.18) 0%,rgba(26,31,143,.08) 50%,transparent 70%);animation:glowPulse 5s ease-in-out infinite;"
+                        aria-hidden="true"></div>
+
+                    <!-- Carousel: cicla entre Abifral Classic e Ecofral -->
+                    <div id="hero-carousel" class="relative w-full max-w-[360px] md:max-w-[480px] lg:max-w-[520px]">
+                        <img src="assets/raw_file/abigral.png" alt="Fralda Abifral Classic"
+                            class="w-full drop-shadow-2xl" id="hero-img-1" />
+                        <img src="assets/raw_file/ecofral.png" alt="Fralda Ecofral"
+                            class="w-full drop-shadow-2xl absolute inset-0"
+                            style="opacity:0" id="hero-img-2" />
+                    </div>
+                    <!-- Indicador de produto ativo -->
+                    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2" id="carousel-dots">
+                        <span class="w-6 h-1 transition-all duration-500 carousel-dot"
+                            style="background:var(--navy)"></span>
+                        <span class="w-2 h-1 transition-all duration-500 carousel-dot"
+                            style="background:rgba(26,31,143,.25)"></span>
+                    </div>
+
+                    <!-- Floating info tag 1 -->
+                    <div class="absolute -top-2 -right-2 md:-top-4 md:right-4 bg-white border border-stone-100 shadow-xl px-4 py-3"
+                        style="animation:float 7s ease-in-out infinite 0.5s">
+                        <span
+                            class="text-[9px] font-mono uppercase tracking-widest text-stone-400 block">Absorção</span>
+                        <span class="text-xl font-black mt-0.5 block"
+                            style="font-family:'Space Grotesk';color:var(--teal)">Alta</span>
+                    </div>
+
+                    <!-- Floating info tag 2 -->
+                    <div class="absolute -bottom-2 -left-2 md:bottom-6 md:-left-8 bg-white border border-stone-100 shadow-xl px-4 py-3"
+                        style="animation:float 8s ease-in-out infinite 2s">
+                        <span
+                            class="text-[9px] font-mono uppercase tracking-widest text-stone-400 block">Tamanhos</span>
+                        <span class="text-lg font-black mt-0.5 block"
+                            style="font-family:'Space Grotesk';color:var(--navy)">M · G · XG</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 scroll-indicator">
+            <span class="text-[9px] font-mono uppercase tracking-widest text-stone-400">Scroll</span>
+            <iconify-icon icon="solar:arrow-down-linear" style="color:var(--teal);font-size:1.25rem"></iconify-icon>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ MARQUEE ══ -->
+    <div class="border-y border-stone-200 overflow-hidden py-4" style="background:var(--navy)">
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Abifral</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Alta
+                    Absorção</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Aloe Vera</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Derm.
+                    Testado</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Ecofral</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Conforto &
+                    Dignidade</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Lagoa Santa · MG</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Controle
+                    de Qualidade</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Abifral</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Alta
+                    Absorção</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Aloe Vera</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Derm.
+                    Testado</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Ecofral</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Conforto &
+                    Dignidade</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8"
+                    style="color:var(--teal)">Lagoa Santa · MG</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+                <span class="text-sm font-mono uppercase tracking-widest mx-8 text-white/50">Controle
+                    de Qualidade</span>
+                <span class="text-sm font-mono mx-4 text-white/30">◆</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ DIFERENCIAIS ══ -->
+    <section id="diferenciais" class="border-b border-stone-200 py-20 md:py-28">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-10">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-4">
+                <div>
+                    <span class="section-label gsap-reveal">01 / Diferenciais</span>
+                    <h2 class="text-4xl md:text-5xl font-semibold tracking-tight mt-2 gsap-reveal"
+                        style="color:var(--navy)">Por que escolher<br /><span
+                            style="color:var(--teal)">a Abifral?</span></h2>
+                </div>
+                <p class="text-stone-400 text-sm font-mono max-w-xs gsap-reveal">Cada detalhe pensado para
+                    oferecer mais conforto, segurança e liberdade de movimento.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="features-grid">
+                <!-- F1 -->
+                <div
+                    class="p-8 border border-stone-200 bg-white card-hover flashlight overflow-hidden group cursor-default gsap-card">
+                    <div class="feature-icon mb-6">
+                        <iconify-icon icon="solar:shield-check-linear"
+                            style="font-size:1.5rem;color:var(--teal)"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-semibold tracking-tight mb-3 group-hover:translate-x-1 transition-transform"
+                        style="color:var(--navy)">Alta Absorção</h3>
+                    <p class="text-sm text-stone-500 leading-relaxed">Gel superabsorvente com fibras de celulose
+                        para controle superior de umidade, mantendo a pele seca e protegida por mais tempo.</p>
+                    <div class="mt-6 h-px bg-gradient-to-r from-teal-400/30 to-transparent"></div>
+                </div>
+                <!-- F2 -->
+                <div
+                    class="p-8 border border-stone-200 bg-white card-hover flashlight overflow-hidden group cursor-default gsap-card">
+                    <div class="feature-icon mb-6">
+                        <iconify-icon icon="solar:leaf-linear"
+                            style="font-size:1.5rem;color:var(--teal)"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-semibold tracking-tight mb-3 group-hover:translate-x-1 transition-transform"
+                        style="color:var(--navy)">Aloe Vera · Pele Saudável</h3>
+                    <p class="text-sm text-stone-500 leading-relaxed">Cobertura interna com Polipropileno e Aloe
+                        Vera oferecendo maciez, respirabilidade e proteção para uma pele sempre saudável.</p>
+                    <div class="mt-6 h-px bg-gradient-to-r from-teal-400/30 to-transparent"></div>
+                </div>
+                <!-- F3 -->
+                <div
+                    class="p-8 border border-stone-200 bg-white card-hover flashlight overflow-hidden group cursor-default gsap-card">
+                    <div class="feature-icon mb-6">
+                        <iconify-icon icon="solar:user-check-rounded-linear"
+                            style="font-size:1.5rem;color:var(--teal)"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-semibold tracking-tight mb-3 group-hover:translate-x-1 transition-transform"
+                        style="color:var(--navy)">Modelagem Anatômica</h3>
+                    <p class="text-sm text-stone-500 leading-relaxed">Formato anatômico com elásticos nas pernas e
+                        barreiras antivazamento para ajuste perfeito e total liberdade de movimento.</p>
+                    <div class="mt-6 h-px bg-gradient-to-r from-teal-400/30 to-transparent"></div>
+                </div>
+                <!-- F4 -->
+                <div
+                    class="p-8 border border-stone-200 bg-white card-hover flashlight overflow-hidden group cursor-default gsap-card">
+                    <div class="feature-icon mb-6">
+                        <iconify-icon icon="solar:adhesive-plaster-linear"
+                            style="font-size:1.5rem;color:var(--teal)"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-semibold tracking-tight mb-3 group-hover:translate-x-1 transition-transform"
+                        style="color:var(--navy)">Fita Tri Laminada</h3>
+                    <p class="text-sm text-stone-500 leading-relaxed">Fita ultra adesiva reposicionável com
+                        indicador de umidade incluso, garantindo ajuste preciso e seguro na cintura.</p>
+                    <div class="mt-6 h-px bg-gradient-to-r from-teal-400/30 to-transparent"></div>
+                </div>
+                <!-- F5 -->
+                <div
+                    class="p-8 border border-stone-200 bg-white card-hover flashlight overflow-hidden group cursor-default gsap-card">
+                    <div class="feature-icon mb-6">
+                        <iconify-icon icon="solar:test-tube-linear"
+                            style="font-size:1.5rem;color:var(--teal)"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-semibold tracking-tight mb-3 group-hover:translate-x-1 transition-transform"
+                        style="color:var(--navy)">Dermatologicamente Testado</h3>
+                    <p class="text-sm text-stone-500 leading-relaxed">Componentes atóxicos e dermatologicamente
+                        testados. Produto dispensado de registro do Ministério da Saúde conforme legislação
+                        vigente.</p>
+                    <div class="mt-6 h-px bg-gradient-to-r from-teal-400/30 to-transparent"></div>
+                </div>
+                <!-- F6 -->
+                <div
+                    class="p-8 border border-stone-200 bg-white card-hover flashlight overflow-hidden group cursor-default gsap-card">
+                    <div class="feature-icon mb-6">
+                        <iconify-icon icon="solar:star-shine-linear"
+                            style="font-size:1.5rem;color:var(--teal)"></iconify-icon>
+                    </div>
+                    <h3 class="text-xl font-semibold tracking-tight mb-3 group-hover:translate-x-1 transition-transform"
+                        style="color:var(--navy)">Controle de Odores</h3>
+                    <p class="text-sm text-stone-500 leading-relaxed">Tecnologia avançada de neutralização de
+                        odores com cobertura externa permeável para máximo conforto ao longo de toda utilização.</p>
+                    <div class="mt-6 h-px bg-gradient-to-r from-teal-400/30 to-transparent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ STATS ══ -->
+    <section class="border-b border-stone-200 py-14 md:py-20" style="background:var(--navy)">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-white/10">
+                <div class="gsap-stat text-center md:text-left md:px-10 first:pl-0">
+                    <div class="stat-number text-5xl md:text-6xl text-white"
+                        data-target="3" data-suffix=" anos">0 anos</div>
+                    <span class="text-[10px] font-mono uppercase tracking-widest mt-3 block"
+                        style="color:var(--teal)">Validade Garantida</span>
+                </div>
+                <div class="gsap-stat text-center md:text-left md:px-10">
+                    <div class="stat-number text-5xl md:text-6xl text-white"
+                        data-target="3" data-suffix=" tam.">0 tam.</div>
+                    <span class="text-[10px] font-mono uppercase tracking-widest mt-3 block"
+                        style="color:var(--teal)">M · G · XG</span>
+                </div>
+                <div class="gsap-stat text-center md:text-left md:px-10">
+                    <div class="stat-number text-5xl md:text-6xl text-white"
+                        data-target="7" data-suffix=" un.">0 un.</div>
+                    <span class="text-[10px] font-mono uppercase tracking-widest mt-3 block"
+                        style="color:var(--teal)">Por Embalagem</span>
+                </div>
+                <div class="gsap-stat text-center md:text-left md:px-10">
+                    <div class="stat-number text-5xl md:text-6xl"
+                        style="color:var(--teal)" data-target="100" data-suffix="%">0%</div>
+                    <span class="text-[10px] font-mono uppercase tracking-widest mt-3 block text-white/50">Controle
+                        de Qualidade</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ PRODUTOS ══ -->
+    <section id="produtos" class="border-b border-stone-200">
+        <div class="p-8 md:p-12 border-b border-stone-200 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+            <div>
+                <span class="section-label gsap-reveal">02 / Linha de Produtos</span>
+                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight mt-2 gsap-reveal"
+                    style="color:var(--navy)">Nossas Linhas</h2>
+            </div>
+            <span class="text-xs font-mono text-stone-400 gsap-reveal">M · G · XG · Incontinência Severa</span>
+        </div>
+
+        <!-- ── Abifral Classic ── -->
+        <div class="grid grid-cols-1 md:grid-cols-2 border-b border-stone-200" id="product-classic"
+            style="min-height:85vh">
+            <!-- Image -->
+            <div class="relative border-b md:border-b-0 md:border-r border-stone-200 prod-bg-classic
+                        flex items-center justify-center p-12 md:p-16 overflow-hidden" style="min-height:420px">
+                <!-- Grid pattern bg -->
+                <div class="absolute inset-0 pointer-events-none opacity-25">
+                    <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="g1" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00C4B4" stroke-width="0.5" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#g1)" />
+                    </svg>
+                </div>
+                <div class="relative z-10" style="animation:float 9s ease-in-out infinite">
+                    <div class="absolute -inset-10 rounded-full pointer-events-none"
+                        style="background:radial-gradient(circle,rgba(26,31,143,.12) 0%,transparent 60%)"
+                        aria-hidden="true"></div>
+                    <img src="assets/raw_file/abigral.png" alt="Fralda Abifral Classic"
+                        class="relative w-full max-w-[320px] md:max-w-[380px] drop-shadow-2xl" id="img-classic" />
+                </div>
+            </div>
+            <!-- Info -->
+            <div class="p-10 md:p-16 flex flex-col justify-center" id="classic-info">
+                <span class="section-label gsap-reveal">Linha Premium</span>
+                <h3 class="text-4xl md:text-5xl font-black tracking-tighter mt-3 mb-6 gsap-reveal"
+                    style="font-family:'Space Grotesk',sans-serif;color:var(--navy)">
+                    Abifral<br /><span style="color:var(--teal)">Classic</span>
+                </h3>
+                <p class="text-stone-600 leading-relaxed mb-8 gsap-reveal">
+                    Fralda descartável para incontinência severa com excelente poder de absorção.
+                    Desenvolvida com gel superabsorvente, cobertura com Aloe Vera e indicador de umidade —
+                    cuidado completo em cada troca.
+                </p>
+                <!-- Specs -->
+                <div class="space-y-3 mb-8 gsap-reveal">
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5"></div>
+                        <span class="text-sm text-stone-600">Gel superabsorvente + fibras de celulose</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5"></div>
+                        <span class="text-sm text-stone-600">Cobertura interna com <strong>Aloe Vera</strong></span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5"></div>
+                        <span class="text-sm text-stone-600">Elásticos nas pernas + barreiras antivazamento</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5"></div>
+                        <span class="text-sm text-stone-600">Fita tri laminada ultra adesiva + indicador de
+                            umidade</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5"></div>
+                        <span class="text-sm text-stone-600">7 unidades por embalagem · Validade 3 anos</span>
+                    </div>
+                </div>
+                <!-- Sizes -->
+                <div class="mb-8 gsap-reveal">
+                    <span
+                        class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block mb-3">Tamanhos
+                        Disponíveis</span>
+                    <div class="flex gap-2" id="sizes-classic">
+                        <div class="size-pill" data-size="M" title="Cintura 80–110 cm"
+                            style="border-color:var(--navy);color:var(--navy)">M</div>
+                        <div class="size-pill" data-size="G" title="Cintura 90–130 cm"
+                            style="border-color:var(--teal);color:var(--teal)">G</div>
+                        <div class="size-pill" data-size="XG" title="Cintura 120–165 cm (acima de 90kg)"
+                            style="border-color:var(--navy);color:var(--navy)">XG</div>
+                    </div>
+                    <span class="text-[10px] font-mono text-stone-400 block mt-2">Passe o mouse para ver a
+                        indicação de cada tamanho</span>
+                </div>
+                <!-- CTA -->
+                <div class="flex flex-wrap gap-3 gsap-reveal">
+                    <a href="https://wa.me/553130253209?text=Ol%C3%A1,%20vim%20pelo%20site!" target="_blank" rel="noopener" class="btn-beam">
+                        <span class="btn-beam-inner">Comprar Agora<iconify-icon
+                                icon="solar:arrow-right-linear"></iconify-icon></span>
+                    </a>
+                    <a href="briefing/produtos/Fraldas Descartaveis Abifral Classic/FICHA-TECNICA-ABIFRAL-CLASSIC-G.pdf"
+                        target="_blank"
+                        class="inline-flex items-center gap-2 px-5 py-3 border border-stone-300 text-sm font-medium uppercase tracking-widest text-stone-600 hover:border-[--teal] hover:text-[--teal] transition-all">
+                        Ficha Técnica<iconify-icon icon="solar:document-linear"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Ecofral ── -->
+        <div class="grid grid-cols-1 md:grid-cols-2" id="product-ecofral" style="min-height:85vh">
+            <!-- Info (left on desktop) -->
+            <div class="p-10 md:p-16 flex flex-col justify-center order-2 md:order-1 border-b md:border-b-0 md:border-r border-stone-200"
+                id="ecofral-info">
+                <span class="section-label gsap-reveal">Linha Eco</span>
+                <h3 class="text-4xl md:text-5xl font-black tracking-tighter mt-3 mb-6 gsap-reveal"
+                    style="font-family:'Space Grotesk',sans-serif;color:var(--navy)">
+                    Eco<span style="color:var(--teal)">fral</span>
+                </h3>
+                <p class="text-stone-600 leading-relaxed mb-8 gsap-reveal">
+                    A linha Ecofral une cuidado com responsabilidade. Com os mesmos padrões de qualidade e
+                    conforto da Abifral, apresenta uma solução pensada para o bem-estar do usuário com
+                    eficiência e praticidade.
+                </p>
+                <!-- Specs -->
+                <div class="space-y-3 mb-8 gsap-reveal">
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5" style="background:var(--teal-light)"></div>
+                        <span class="text-sm text-stone-600">Alta absorção com conforto prolongado</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5" style="background:var(--teal-light)"></div>
+                        <span class="text-sm text-stone-600">Toque suave e respirável</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5" style="background:var(--teal-light)"></div>
+                        <span class="text-sm text-stone-600">Modelagem anatômica com ajuste preciso</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="timeline-dot mt-1.5" style="background:var(--teal-light)"></div>
+                        <span class="text-sm text-stone-600">Rigoroso controle de qualidade Abifral</span>
+                    </div>
+                </div>
+                <!-- Sizes -->
+                <div class="mb-8 gsap-reveal">
+                    <span
+                        class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block mb-3">Tamanhos
+                        Disponíveis</span>
+                    <div class="flex gap-2" id="sizes-ecofral">
+                        <div class="size-pill" data-size="M"
+                            style="border-color:var(--teal);color:var(--teal)">M</div>
+                        <div class="size-pill" data-size="G"
+                            style="border-color:var(--navy);color:var(--navy)">G</div>
+                        <div class="size-pill" data-size="XG"
+                            style="border-color:var(--teal);color:var(--teal)">XG</div>
+                    </div>
+                </div>
+                <!-- CTA -->
+                <div class="flex flex-wrap gap-3 gsap-reveal">
+                    <a href="https://wa.me/553130253209?text=Ol%C3%A1,%20vim%20pelo%20site!" target="_blank" rel="noopener" class="btn-beam">
+                        <span class="btn-beam-inner">Comprar Agora<iconify-icon
+                                icon="solar:arrow-right-linear"></iconify-icon></span>
+                    </a>
+                    <a href="briefing/produtos/Fraldas Descartaveis Ecofral/FICHA-TECNICA-G.pdf"
+                        target="_blank"
+                        class="inline-flex items-center gap-2 px-5 py-3 border border-stone-300 text-sm font-medium uppercase tracking-widest text-stone-600 hover:border-[--teal] hover:text-[--teal] transition-all">
+                        Ficha Técnica<iconify-icon icon="solar:document-linear"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+            <!-- Image (right on desktop) -->
+            <div class="relative order-1 md:order-2 prod-bg-ecofral
+                        flex items-center justify-center p-12 md:p-16 overflow-hidden" style="min-height:420px">
+                <div class="absolute inset-0 pointer-events-none opacity-20">
+                    <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="g2" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1A1F8F" stroke-width="0.5" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#g2)" />
+                    </svg>
+                </div>
+                <div class="relative z-10" style="animation:float 10s ease-in-out infinite 1.5s">
+                    <div class="absolute -inset-10 rounded-full pointer-events-none"
+                        style="background:radial-gradient(circle,rgba(0,196,180,.14) 0%,transparent 60%)"
+                        aria-hidden="true"></div>
+                    <img src="assets/raw_file/ecofral.png" alt="Fralda Ecofral"
+                        class="relative w-full max-w-[320px] md:max-w-[380px] drop-shadow-2xl" id="img-ecofral" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ SOBRE ══ -->
+    <section id="sobre" class="border-b border-stone-200 py-20 md:py-28 overflow-hidden"
+        style="background:var(--off-white)">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start">
+                <!-- Left -->
+                <div class="col-span-1 md:col-span-5">
+                    <span class="section-label gsap-reveal">03 / Sobre Nós</span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter mt-3 mb-6 gsap-reveal"
+                        style="font-family:'Space Grotesk',sans-serif;color:var(--navy)">
+                        Quem é a<br /><span style="color:var(--teal)">Abifral?</span>
+                    </h2>
+                    <p class="text-stone-600 leading-relaxed mb-5 gsap-reveal">
+                        Somos uma empresa comprometida em oferecer conforto, segurança e bem-estar a quem mais
+                        precisa. Nossas fraldas geriátricas foram desenvolvidas com tecnologia de ponta e materiais
+                        de alta qualidade.
+                    </p>
+                    <p class="text-stone-600 leading-relaxed mb-10 gsap-reveal">
+                        Sediados em Lagoa Santa, Minas Gerais, produzimos com rigoroso controle de qualidade,
+                        garantindo máxima absorção, maciez e respirabilidade em cada produto.
+                    </p>
+                    <!-- Mission / Vision -->
+                    <div class="space-y-4 gsap-reveal">
+                        <div class="p-5 border border-stone-200 bg-white">
+                            <span class="section-label" style="margin-bottom:.25rem">Missão</span>
+                            <p class="text-sm text-stone-600 leading-relaxed">Promover qualidade de vida e
+                                confiança através de produtos que unem inovação, conforto e cuidado humano.</p>
+                        </div>
+                        <div class="p-5 border border-stone-200 bg-white">
+                            <span class="section-label" style="margin-bottom:.25rem">Visão</span>
+                            <p class="text-sm text-stone-600 leading-relaxed">Ser referência nacional em produtos
+                                de higiene geriátrica, reconhecida pela excelência e compromisso com o consumidor.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right: Values -->
+                <div class="col-span-1 md:col-span-7">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="values-grid">
+                        <div
+                            class="p-6 border border-stone-200 bg-white card-hover gsap-card group">
+                            <iconify-icon icon="solar:heart-linear"
+                                style="font-size:1.75rem;color:var(--teal)"
+                                class="mb-4 block"></iconify-icon>
+                            <h4 class="text-base font-semibold mb-2 group-hover:translate-x-1 transition-transform"
+                                style="color:var(--navy)">Cuidado com as Pessoas</h4>
+                            <p class="text-xs text-stone-500 leading-relaxed">Cada produto desenvolvido pensando
+                                no conforto e na dignidade de cada usuário.</p>
+                        </div>
+                        <div
+                            class="p-6 border border-stone-200 bg-white card-hover gsap-card group">
+                            <iconify-icon icon="solar:leaf-linear"
+                                style="font-size:1.75rem;color:var(--teal)"
+                                class="mb-4 block"></iconify-icon>
+                            <h4 class="text-base font-semibold mb-2 group-hover:translate-x-1 transition-transform"
+                                style="color:var(--navy)">Qualidade e Sustentabilidade</h4>
+                            <p class="text-xs text-stone-500 leading-relaxed">Materiais de alta qualidade com
+                                responsabilidade em todo o processo produtivo.</p>
+                        </div>
+                        <div
+                            class="p-6 border border-stone-200 bg-white card-hover gsap-card group">
+                            <iconify-icon icon="solar:shield-check-linear"
+                                style="font-size:1.75rem;color:var(--teal)"
+                                class="mb-4 block"></iconify-icon>
+                            <h4 class="text-base font-semibold mb-2 group-hover:translate-x-1 transition-transform"
+                                style="color:var(--navy)">Ética e Compromisso</h4>
+                            <p class="text-xs text-stone-500 leading-relaxed">Transparência e responsabilidade em
+                                cada etapa da produção e distribuição.</p>
+                        </div>
+                        <div class="p-6 border border-stone-200 bg-white card-hover gsap-card group"
+                            style="border-top:3px solid var(--teal)">
+                            <iconify-icon icon="solar:atom-linear"
+                                style="font-size:1.75rem;color:var(--navy)"
+                                class="mb-4 block"></iconify-icon>
+                            <h4 class="text-base font-semibold mb-2 group-hover:translate-x-1 transition-transform"
+                                style="color:var(--navy)">Inovação Constante</h4>
+                            <p class="text-xs text-stone-500 leading-relaxed">Sempre buscando novas tecnologias
+                                para melhorar a experiência e o bem-estar do usuário.</p>
+                        </div>
+                    </div>
+                    <!-- Indicações -->
+                    <div class="mt-6 p-6 border border-stone-200 bg-white gsap-reveal">
+                        <h4 class="text-xs font-bold uppercase tracking-widest mb-4"
+                            style="color:var(--navy)">Indicações de Uso</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge border-stone-300 text-stone-600 bg-stone-50">Pós-parto</span>
+                            <span class="badge border-stone-300 text-stone-600 bg-stone-50">Geriátrico</span>
+                            <span class="badge border-stone-300 text-stone-600 bg-stone-50">Incontinência</span>
+                            <span class="badge border-stone-300 text-stone-600 bg-stone-50">Pós-operatório</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ CTA SECTION ══ -->
+    <section class="relative py-24 md:py-32 border-b border-stone-200 overflow-hidden"
+        style="background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 100%)">
+        <!-- Decorative bg -->
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div class="grid-lines">
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+                <span style="border-color:rgba(255,255,255,.04)"></span>
+            </div>
+            <div class="absolute top-1/4 left-1/4 w-80 h-80 rounded-full"
+                style="background:radial-gradient(circle,rgba(0,196,180,.08) 0%,transparent 70%)"></div>
+            <div class="absolute bottom-0 right-1/3 w-64 h-64 rounded-full"
+                style="background:radial-gradient(circle,rgba(26,31,143,.2) 0%,transparent 70%)"></div>
+        </div>
+        <div class="max-w-[900px] mx-auto px-6 md:px-10 text-center relative z-10">
+            <span class="section-label justify-center gsap-reveal" style="justify-content:center">Qualidade que
+                Transforma</span>
+            <h2 class="mt-4 font-black tracking-tighter text-white leading-tight gsap-reveal"
+                style="font-size:clamp(2.5rem,6vw,5rem);font-family:'Space Grotesk',sans-serif">
+                Construa uma rotina<br /><span style="color:var(--teal)">de cuidado e confiança.</span>
+            </h2>
+            <p class="mt-6 text-white/50 max-w-lg mx-auto text-base leading-relaxed gsap-reveal">
+                Nossas fraldas geriátricas unem tecnologia, conforto e dignidade para proporcionar mais
+                autonomia e qualidade de vida no dia a dia.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-4 gsap-reveal">
+                <a href="https://wa.me/553130253209?text=Ol%C3%A1,%20vim%20pelo%20site!" target="_blank" rel="noopener" class="btn-beam">
+                    <span class="btn-beam-inner">Fazer Pedido<iconify-icon
+                            icon="solar:arrow-right-up-linear"></iconify-icon></span>
+                </a>
+                <a href="#produtos"
+                    class="inline-flex items-center gap-2 px-6 py-3.5 border border-white/20 text-sm font-medium uppercase tracking-widest text-white/60 hover:border-[--teal] hover:text-[--teal] transition-all">
+                    Ver Produtos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ CONTATO ══ -->
+    <section id="contato" class="border-b border-stone-200 py-20 md:py-28">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-20 items-start">
+                <!-- Left: info -->
+                <div>
+                    <span class="section-label gsap-reveal">04 / Fale Conosco</span>
+                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter mt-3 mb-6 gsap-reveal"
+                        style="font-family:'Space Grotesk',sans-serif;color:var(--navy)">
+                        Pronto para<br /><span style="color:var(--teal)">fazer seu pedido?</span>
+                    </h2>
+                    <p class="text-stone-500 leading-relaxed mb-10 gsap-reveal">
+                        Entre em contato para pedidos, informações sobre produtos ou atendimento especializado.
+                        Nossa equipe está pronta para ajudar.
+                    </p>
+                    <div class="space-y-5 gsap-reveal">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 border border-stone-200 flex items-center justify-center flex-shrink-0"
+                                style="color:var(--teal)">
+                                <iconify-icon icon="solar:phone-linear" style="font-size:1.125rem"></iconify-icon>
+                            </div>
+                            <div>
+                                <span
+                                    class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">Atendimento</span>
+                                <span class="text-stone-700 text-sm font-medium">(31) 3025-3209</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 border border-stone-200 flex items-center justify-center flex-shrink-0"
+                                style="color:var(--teal)">
+                                <iconify-icon icon="solar:map-point-linear"
+                                    style="font-size:1.125rem"></iconify-icon>
+                            </div>
+                            <div>
+                                <span
+                                    class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">Endereço</span>
+                                <span class="text-stone-700 text-sm">Av. das Árvores, 405 — Distrito Industrial
+                                    Olhos D'Água<br />Lagoa Santa, MG — CEP 33240-009</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 border border-stone-200 flex items-center justify-center flex-shrink-0"
+                                style="color:var(--teal)">
+                                <iconify-icon icon="simple-icons:whatsapp"
+                                    style="font-size:1.125rem"></iconify-icon>
+                            </div>
+                            <div>
+                                <span
+                                    class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">WhatsApp</span>
+                                <a href="https://wa.me/5531998845890" target="_blank"
+                                    class="text-stone-700 text-sm font-medium hover:text-[--teal] transition-colors">(31)
+                                    9984-5890 — Arthur Velten</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 border border-stone-200 flex items-center justify-center flex-shrink-0"
+                                style="color:var(--teal)">
+                                <iconify-icon icon="simple-icons:instagram"
+                                    style="font-size:1.125rem"></iconify-icon>
+                            </div>
+                            <div>
+                                <span
+                                    class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block">Instagram</span>
+                                <a href="https://instagram.com/abifraloficial" target="_blank"
+                                    class="text-stone-700 text-sm font-medium hover:text-[--teal] transition-colors">@abifraloficial</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Google Maps -->
+                <div class="gsap-reveal flex flex-col gap-0">
+                    <!-- Mapa -->
+                    <div class="border border-stone-200 overflow-hidden" style="height:380px">
+                        <iframe
+                            src="https://maps.google.com/maps?q=Avenida+das+Arvores,+405,+Lagoa+Santa,+MG,+Brasil&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            width="100%" height="100%" style="border:0;display:block;filter:grayscale(15%)"
+                            allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Localização Abifral — Lagoa Santa MG"></iframe>
+                    </div>
+                    <!-- Card de endereço abaixo do mapa -->
+                    <div class="border border-t-0 border-stone-200 bg-white p-5 flex items-start gap-4">
+                        <div class="w-10 h-10 border border-stone-200 flex items-center justify-center flex-shrink-0 mt-0.5"
+                            style="color:var(--teal)">
+                            <iconify-icon icon="solar:map-point-linear" style="font-size:1.125rem"></iconify-icon>
+                        </div>
+                        <div class="flex-1">
+                            <span
+                                class="text-[10px] font-mono uppercase tracking-widest text-stone-400 block mb-1">Endereço</span>
+                            <p class="text-sm text-stone-700 leading-relaxed">
+                                Av. das Árvores, 405 — Distrito Industrial Olhos D'Água<br />
+                                Lagoa Santa, MG — CEP 33240-009
+                            </p>
+                        </div>
+                        <a href="https://maps.google.com/maps?q=Avenida+das+Arvores,+405,+Lagoa+Santa,+MG"
+                            target="_blank" rel="noopener"
+                            class="flex-shrink-0 text-[10px] font-mono uppercase tracking-widest hover:text-[--teal] transition-colors mt-0.5"
+                            style="color:var(--teal)">
+                            Abrir<br />Maps
+                            <iconify-icon icon="solar:arrow-right-up-linear" class="block mt-0.5"></iconify-icon>
+                        </a>
+                    </div>
+                    <!-- CTA WhatsApp direto -->
+                    <a href="https://wa.me/553130253209?text=Ol%C3%A1,%20vim%20pelo%20site!"
+                        target="_blank" rel="noopener"
+                        class="mt-4 btn-beam w-full">
+                        <span class="btn-beam-inner w-full justify-center">
+                            <iconify-icon icon="simple-icons:whatsapp"></iconify-icon>
+                            Falar no WhatsApp Agora
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ FOOTER ══ -->
+    <footer class="relative pt-14 pb-8 overflow-hidden" style="background:var(--navy-dark)">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-10 mb-14">
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-4">
+                    <div class="flex items-center gap-3 mb-5">
+                        <img src="assets/raw_file/logo.png" alt="Abifral" class="h-9 w-auto brightness-0 invert"
+                            onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                        <span class="text-2xl font-black tracking-tighter text-white hidden">abi<span
+                                style="color:var(--teal)">fral</span></span>
+                    </div>
+                    <p class="text-white/40 text-sm leading-relaxed max-w-[220px] mb-6">Conforto, segurança e
+                        bem-estar com tecnologia de ponta em cada produto geriátrico.</p>
+                    <div class="flex gap-2">
+                        <a href="https://instagram.com/abifraloficial" target="_blank"
+                            class="w-9 h-9 border border-white/10 flex items-center justify-center text-white/40 hover:border-[--teal] hover:text-[--teal] transition-colors"
+                            aria-label="Instagram">
+                            <iconify-icon icon="simple-icons:instagram"></iconify-icon>
+                        </a>
+                        <a href="https://wa.me/5531998845890" target="_blank"
+                            class="w-9 h-9 border border-white/10 flex items-center justify-center text-white/40 hover:border-[--teal] hover:text-[--teal] transition-colors"
+                            aria-label="WhatsApp">
+                            <iconify-icon icon="simple-icons:whatsapp"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+                <!-- Nav -->
+                <div class="col-span-1 md:col-span-2">
+                    <h4 class="text-[10px] font-mono uppercase tracking-widest mb-5"
+                        style="color:var(--teal)">Navegação</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#hero"
+                                class="text-white/50 hover:text-white transition-colors">Início</a></li>
+                        <li><a href="#diferenciais"
+                                class="text-white/50 hover:text-white transition-colors">Diferenciais</a></li>
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Produtos</a></li>
+                        <li><a href="#sobre"
+                                class="text-white/50 hover:text-white transition-colors">Sobre</a></li>
+                        <li><a href="#contato"
+                                class="text-white/50 hover:text-white transition-colors">Contato</a></li>
+                    </ul>
+                </div>
+                <!-- Products -->
+                <div class="col-span-1 md:col-span-3">
+                    <h4 class="text-[10px] font-mono uppercase tracking-widest mb-5"
+                        style="color:var(--teal)">Produtos</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Abifral Classic M</a></li>
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Abifral Classic G</a></li>
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Abifral Classic XG</a>
+                        </li>
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Ecofral M</a></li>
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Ecofral G</a></li>
+                        <li><a href="#produtos"
+                                class="text-white/50 hover:text-white transition-colors">Ecofral XG</a></li>
+                    </ul>
+                </div>
+                <!-- Info -->
+                <div class="col-span-1 md:col-span-3">
+                    <h4 class="text-[10px] font-mono uppercase tracking-widest mb-5"
+                        style="color:var(--teal)">Informações</h4>
+                    <ul class="space-y-2 text-xs font-mono text-white/40">
+                        <li>(31) 3025-3209</li>
+                        <li>@abifraloficial</li>
+                        <li>Lagoa Santa, MG</li>
+                        <li class="pt-1">CNPJ: 49.928.561/0001-44</li>
+                        <li>Resp. Técnica:</li>
+                        <li>Dayana Reis Pereira</li>
+                        <li>CRF/MG 35.525</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span class="text-xs text-white/20">© 2026 Abifral Comércio e Indústria LTDA. Todos os direitos
+                    reservados.</span>
+                <span class="text-xs font-mono text-white/20">Produto dispensado de registro — Port. N°
+                    1.480/1990 · RDC N° 142/2017</span>
+            </div>
+        </div>
+        <!-- Watermark -->
+        <div class="mt-12 text-center select-none pointer-events-none overflow-hidden opacity-[0.035]">
+            <span class="font-black leading-none tracking-tighter whitespace-nowrap"
+                style="font-size:clamp(4rem,18vw,14rem);font-family:'Space Grotesk',sans-serif;color:#fff">abiFral</span>
+        </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════ SCRIPTS ══ -->
+    <script>
+        /* ── Wait for GSAP ── */
+        (function initAnimations() {
+            if (typeof gsap === 'undefined') {
+                setTimeout(initAnimations, 100);
+                return;
+            }
+            gsap.registerPlugin(ScrollTrigger);
+
+            /* ── Progress bar ── */
+            ScrollTrigger.create({
+                trigger: document.body,
+                start: 'top top',
+                end: 'bottom bottom',
+                onUpdate: (self) => {
+                    document.getElementById('progress-bar').style.width = (self.progress * 100) + '%';
+                }
+            });
+
+            /* ── Nav solid on scroll ── */
+            ScrollTrigger.create({
+                start: 'top -60',
+                onEnter: () => document.getElementById('main-nav').classList.add('nav-solid'),
+                onLeaveBack: () => document.getElementById('main-nav').classList.remove('nav-solid'),
+            });
+
+            /* ── Hero entrance ── */
+            const heroTl = gsap.timeline({ delay: 0.15 });
+            heroTl
+                .to('#hero-label', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0)
+                .to('#hero-title', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, 0.15)
+                .to('#hero-desc', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.35)
+                .to('#hero-cta', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.5)
+                .to('#hero-badges', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 0.65)
+                .to('#hero-product-wrap', { opacity: 1, x: 0, duration: 1.2, ease: 'power3.out' }, 0.25);
+
+            /* ── Hero carousel: cicla entre abigral e ecofral ── */
+            const carouselImgs = ['#hero-img-1', '#hero-img-2'];
+            const carouselDots = document.querySelectorAll('.carousel-dot');
+            let carouselIdx = 0;
+            setInterval(() => {
+                gsap.to(carouselImgs[carouselIdx], { opacity: 0, duration: 1, ease: 'power2.inOut' });
+                carouselDots[carouselIdx].style.width = '0.5rem';
+                carouselDots[carouselIdx].style.background = 'rgba(26,31,143,.25)';
+                carouselIdx = (carouselIdx + 1) % carouselImgs.length;
+                gsap.to(carouselImgs[carouselIdx], { opacity: 1, duration: 1, ease: 'power2.inOut' });
+                carouselDots[carouselIdx].style.width = '1.5rem';
+                carouselDots[carouselIdx].style.background = 'var(--navy)';
+            }, 3500);
+
+            /* ── Hero parallax: product image ── */
+            gsap.to('#hero-carousel', {
+                y: 80,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1.2
+                }
+            });
+
+            /* ── Hero text mild parallax ── */
+            gsap.to('#hero-text', {
+                y: -50,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1.8
+                }
+            });
+
+            /* ── Floating orbs parallax ── */
+            gsap.to('#orb-1', {
+                y: -120,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 2
+                }
+            });
+            gsap.to('#orb-2', {
+                y: -80,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 3
+                }
+            });
+
+            /* ── Product image parallax ── */
+            gsap.to('#img-classic', {
+                y: -60,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#product-classic',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1.5
+                }
+            });
+            gsap.to('#img-ecofral', {
+                y: -60,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#product-ecofral',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1.5
+                }
+            });
+
+            /* ── Scroll reveal: .gsap-reveal ── */
+            gsap.utils.toArray('.gsap-reveal').forEach(el => {
+                gsap.fromTo(el,
+                    { opacity: 0, y: 36 },
+                    {
+                        opacity: 1, y: 0,
+                        duration: 0.85,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: el,
+                            start: 'top 88%',
+                            toggleActions: 'play none none none'
+                        }
+                    }
+                );
+            });
+
+            /* ── Feature cards stagger ── */
+            const featureCards = document.querySelectorAll('.gsap-card');
+            featureCards.forEach((card, i) => {
+                gsap.fromTo(card,
+                    { opacity: 0, y: 50 },
+                    {
+                        opacity: 1, y: 0,
+                        duration: 0.7,
+                        ease: 'power3.out',
+                        delay: (i % 3) * 0.08,
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 90%',
+                            toggleActions: 'play none none none'
+                        }
+                    }
+                );
+            });
+
+            /* ── Classic info slide-in ── */
+            gsap.fromTo('#classic-info .gsap-reveal',
+                { opacity: 0, x: 40 },
+                {
+                    opacity: 1, x: 0,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    stagger: 0.1,
+                    scrollTrigger: {
+                        trigger: '#classic-info',
+                        start: 'top 78%',
+                        toggleActions: 'play none none none'
+                    }
+                }
+            );
+
+            /* ── Ecofral info slide-in ── */
+            gsap.fromTo('#ecofral-info .gsap-reveal',
+                { opacity: 0, x: -40 },
+                {
+                    opacity: 1, x: 0,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    stagger: 0.1,
+                    scrollTrigger: {
+                        trigger: '#ecofral-info',
+                        start: 'top 78%',
+                        toggleActions: 'play none none none'
+                    }
+                }
+            );
+
+            /* ── Stats counter ── */
+            document.querySelectorAll('.gsap-stat').forEach(statEl => {
+                const numEl = statEl.querySelector('.stat-number');
+                const target = parseInt(numEl.dataset.target) || 0;
+                const suffix = numEl.dataset.suffix || '';
+                const obj = { val: 0 };
+
+                gsap.fromTo(statEl,
+                    { opacity: 0, y: 30 },
+                    {
+                        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+                        scrollTrigger: { trigger: statEl, start: 'top 82%' }
+                    }
+                );
+
+                ScrollTrigger.create({
+                    trigger: statEl,
+                    start: 'top 82%',
+                    once: true,
+                    onEnter: () => {
+                        gsap.to(obj, {
+                            val: target,
+                            duration: 2,
+                            ease: 'power2.out',
+                            onUpdate: () => {
+                                numEl.textContent = Math.round(obj.val) + suffix;
+                            }
+                        });
+                    }
+                });
+            });
+
+        })();
+
+        /* ── Flashlight ── */
+        document.querySelectorAll('.flashlight').forEach(el => {
+            el.addEventListener('mousemove', e => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+                el.style.setProperty('--my', `${e.clientY - r.top}px`);
+            });
+        });
+
+        /* ── Mobile menu ── */
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('open');
+        });
+        document.querySelectorAll('#mobile-menu a').forEach(a => {
+            a.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.remove('open');
+            });
+        });
+
+        /* ── Size pills ── */
+        document.querySelectorAll('#sizes-classic, #sizes-ecofral').forEach(container => {
+            container.querySelectorAll('.size-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    // Limpa todos os pills do container
+                    container.querySelectorAll('.size-pill').forEach(p => {
+                        p.style.background = '';
+                        p.style.fontWeight = '700';
+                    });
+                    // getComputedStyle retorna rgb(...) real — não var(--teal) — evitando o bug
+                    const rgb = window.getComputedStyle(pill).color;
+                    const bg = rgb.startsWith('rgba')
+                        ? rgb
+                        : rgb.replace('rgb(', 'rgba(').replace(')', ', 0.13)');
+                    pill.style.background = bg;
+                });
+            });
+        });
+
+        /* ── Smooth anchor scroll (for older browsers) ── */
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = a.getAttribute('href');
+                if (id === '#') return;
+                const el = document.querySelector(id);
+                if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
